@@ -17,7 +17,7 @@
 ### 1. 克隆项目
 
 ```bash
-git clone https://github.com/your-username/udid-server.git
+git clone https://github.com/yuanhuikai/udid-server.git
 cd udid-server
 ```
 
