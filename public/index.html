@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>iOS UDID 获取工具</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <style>
+      body {
+        font-family: sans-serif;
+        background: #f5f5f5;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        max-width: 500px;
+        margin: 60px auto;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px #0001;
+        padding: 2em;
+      }
+      h1 {
+        color: #007aff;
+        text-align: center;
+      }
+      h2 {
+        color: #007aff;
+        text-align: center;
+      }
+      .download-section {
+        text-align: center;
+      }
+      .btn {
+        background: #007aff;
+        color: #fff;
+        border: none;
+        padding: 1em 2em;
+        border-radius: 5px;
+        font-size: 1.2em;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        margin: 10px 0;
+      }
+      .btn:hover {
+        background: #005bb5;
+      }
+      .copy-btn {
+        background: #34c759;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-left: 10px;
+        font-size: 0.9em;
+      }
+      .copy-btn:hover {
+        background: #28a745;
+      }
+      .back-btn {
+        background: #6c757d;
+        color: white;
+        text-decoration: none;
+        padding: 8px 16px;
+        border-radius: 5px;
+        display: inline-block;
+        margin-top: 1em;
+        font-size: 0.9em;
+      }
+      .back-btn:hover {
+        background: #5a6268;
+      }
+      .tip {
+        color: #888;
+        margin-top: 1em;
+        font-size: 0.9em;
+      }
+      .result-section {
+        display: none;
+      }
+      .info-box {
+        background: #f8f9fa;
+        padding: 1.5em;
+        border-radius: 8px;
+        margin: 1em 0;
+      }
+      .udid-text {
+        font-family: monospace;
+        font-size: 1.1em;
+        color: #d6336c;
+        background: #fff;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        word-break: break-all;
+        margin: 10px 0;
+      }
+      .success {
+        color: #28a745;
+        font-size: 0.9em;
+        margin-left: 10px;
+        display: none;
+      }
+      .alert {
+        background: #fff3cd;
+        padding: 1em;
+        border-radius: 5px;
+        border-left: 4px solid #ffc107;
+        margin: 1em 0;
+      }
+      .device-info p {
+        margin: 0.5em 0;
+        padding: 0.3em 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- 下载区域 -->
+      <div id="downloadSection" class="download-section">
+        <h1>iOS UDID 获取工具</h1>
+        <p>请用 <b>Safari</b> 浏览器打开本页面，点击下方按钮获取您的 UDID。</p>
+        <a href="/get-udid" class="btn">获取 UDID</a>
+        <div class="tip">
+          <p>1. 点击按钮后，系统会提示安装描述文件，请允许安装。</p>
+          <p>2. 安装完成后会自动跳转回网页并显示您的 UDID。</p>
+          <p>3. 本工具不会收集您的任何信息。</p>
+        </div>
+      </div>
+
+      <!-- 结果区域 -->
+      <div id="resultSection" class="result-section">
+        <h2>🎉 UDID 获取成功！</h2>
+        <div class="info-box">
+          <p><strong>UDID:</strong></p>
+          <div class="udid-text" id="udidValue"></div>
+          <button class="copy-btn" onclick="copyUDID()">复制UDID</button>
+          <span class="success" id="copySuccess">已复制!</span>
+
+          <div class="device-info" style="margin-top: 1.5em">
+            <p><strong>设备信息:</strong></p>
+            <p>📱 设备型号: <span id="productValue"></span></p>
+            <p>📋 系统版本: <span id="versionValue"></span></p>
+            <p>🕐 获取时间: <span id="timeValue"></span></p>
+          </div>
+        </div>
+
+        <div class="alert">
+          <p><strong>💡 提示:</strong></p>
+          <p>• 请妥善保存您的 UDID</p>
+          <p>• 可以删除刚才安装的描述文件了</p>
+          <p>• 设置 → 通用 → VPN与设备管理 → 删除描述文件</p>
+        </div>
+
+        <a href="/" class="back-btn">重新获取</a>
+      </div>
+    </div>
+
+    <script>
+      // 页面加载时检查 URL 参数
+      window.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const udid = urlParams.get("udid");
+        const product = urlParams.get("product");
+        const version = urlParams.get("version");
+
+        if (udid && udid !== "未获取到UDID") {
+          // 显示结果区域，隐藏下载区域
+          document.getElementById("downloadSection").style.display = "none";
+          document.getElementById("resultSection").style.display = "block";
+
+          // 填充数据
+          document.getElementById("udidValue").textContent = udid;
+          document.getElementById("productValue").textContent = product || "未知设备";
+          document.getElementById("versionValue").textContent = version || "未知版本";
+          document.getElementById("timeValue").textContent = new Date().toLocaleString();
+        }
+      });
+
+      // 复制 UDID 功能
+      function copyUDID() {
+        const udidText = document.getElementById("udidValue").textContent;
+
+        // 现代浏览器方法
+        if (navigator.clipboard && window.isSecureContext) {
+          navigator.clipboard
+            .writeText(udidText)
+            .then(function () {
+              showCopySuccess();
+            })
+            .catch(function () {
+              fallbackCopy(udidText);
+            });
+        } else {
+          // 降级方案
+          fallbackCopy(udidText);
+        }
+      }
+
+      // 降级复制方案
+      function fallbackCopy(text) {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        textArea.style.opacity = "0";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+
+        try {
+          document.execCommand("copy");
+          showCopySuccess();
+        } catch (err) {
+          console.error("复制失败:", err);
+          alert("复制失败，请手动选择文本复制");
+        }
+
+        document.body.removeChild(textArea);
+      }
+
+      // 显示复制成功提示
+      function showCopySuccess() {
+        const success = document.getElementById("copySuccess");
+        success.style.display = "inline";
+        setTimeout(() => {
+          success.style.display = "none";
+        }, 2000);
+      }
+    </script>
+  </body>
+</html>
